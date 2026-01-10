@@ -17,26 +17,29 @@ public class SbmClient implements ClientModInitializer {
     public static final ConfigHolder<SbmConfig> CONFIG = AutoConfig.register(SbmConfig.class, JanksonConfigSerializer::new);
 
     private final KeyBinding.Category keybindCategory = KeyBinding.Category.create(Identifier.of("sbm", "keybinds"));
-    private final KeyBinding toggleFarmingKey = new KeyBinding("Toggle Farming", InputUtil.Type.KEYSYM, InputUtil.GLFW_KEY_F24, keybindCategory);
+    private final KeyBinding toggleFarmingKey = new KeyBinding("Start/Stop Farming", InputUtil.Type.KEYSYM, InputUtil.GLFW_KEY_F24, keybindCategory);
+    private final KeyBinding resumeFarmingKey = new KeyBinding("Resume Farming", InputUtil.Type.KEYSYM, InputUtil.GLFW_KEY_F23, keybindCategory);
 
-    private Thread currentMacro;
+    private Macro currentMacro;
 
     @Override
     public void onInitializeClient() {
         KeyBindingHelper.registerKeyBinding(toggleFarmingKey);
+        KeyBindingHelper.registerKeyBinding(resumeFarmingKey);
 
-        ClientTickEvents.START_CLIENT_TICK.register((client) -> Macro.tickDelayQueue.offer(Boolean.TRUE));
-        ClientTickEvents.END_CLIENT_TICK.register((client) -> {
+        ClientTickEvents.START_CLIENT_TICK.register((mc) -> Macro.tickDelayQueue.offer(Boolean.TRUE));
+        ClientTickEvents.END_CLIENT_TICK.register((mc) -> {
             if (toggleFarmingKey.wasPressed()) {
-                if (currentMacro instanceof FarmingMacro farmingMacro && currentMacro.isAlive()) {
-                    if (farmingMacro.isPaused()) {
-                        farmingMacro.unpause();
-                    } else {
-                        farmingMacro.pause();
-                    }
+                if (currentMacro instanceof FarmingMacro && currentMacro.isAlive() && !currentMacro.isPaused()) {
+                    currentMacro.pause();
                 } else {
                     currentMacro = new FarmingMacro();
                     currentMacro.start();
+                }
+            }
+            if (resumeFarmingKey.wasPressed()) {
+                if (currentMacro instanceof FarmingMacro && currentMacro.isAlive() && currentMacro.isPaused()) {
+                    currentMacro.unpause();
                 }
             }
         });
