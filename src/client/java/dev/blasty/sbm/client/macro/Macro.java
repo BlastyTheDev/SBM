@@ -5,7 +5,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-public abstract class Macro implements Runnable {
+public abstract class Macro extends Thread {
     public static final BlockingQueue<Boolean> tickDelayQueue = new ArrayBlockingQueue<>(1);
 
     private final ReentrantLock lock = new ReentrantLock();
@@ -47,7 +47,7 @@ public abstract class Macro implements Runnable {
         }
     }
 
-    public final void resume() {
+    public final void unpause() {
         lock.lock();
         try {
             paused = false;
