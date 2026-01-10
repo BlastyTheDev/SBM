@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "sbm",
+  "version": "${version}",
+  "name": "SBM",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "All-Rights-Reserved",
+  "icon": "assets/sbm/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "dev.blasty.sbm.client.SbmClient"
+    ],
+    "main": [
+      "dev.blasty.sbm.Sbm"
+    ]
+  },
+  "mixins": [
+    "sbm.mixins.json",
+    {
+      "config": "sbm.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
