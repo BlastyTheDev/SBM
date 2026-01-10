@@ -1,5 +1,9 @@
 package dev.blasty.sbm.client.macro;
 
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.option.GameOptions;
+import net.minecraft.client.option.KeyBinding;
+
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.locks.Condition;
@@ -11,6 +15,17 @@ public abstract class Macro extends Thread {
     private final ReentrantLock lock = new ReentrantLock();
     private final Condition unpaused = lock.newCondition();
     private volatile boolean paused;
+
+    protected final MinecraftClient mc = MinecraftClient.getInstance();
+    protected final GameOptions opts = mc.options;
+
+    protected final void pressKey(KeyBinding key) {
+        mc.execute(() -> key.setPressed(true));
+    }
+
+    protected final void releaseKey(KeyBinding key) {
+        mc.execute(() -> key.setPressed(false));
+    }
 
     protected final void sleep(int ticks) {
         ticks += tickDelayQueue.size();
