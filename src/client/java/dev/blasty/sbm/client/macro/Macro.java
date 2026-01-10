@@ -14,10 +14,16 @@ public abstract class Macro extends Thread {
 
     private final ReentrantLock lock = new ReentrantLock();
     private final Condition unpaused = lock.newCondition();
-    private volatile boolean paused;
+
+    protected volatile boolean paused;
+    protected volatile boolean wasPaused;
 
     protected final MinecraftClient mc = MinecraftClient.getInstance();
     protected final GameOptions opts = mc.options;
+
+    public Macro() {
+        setName("Macro thread");
+    }
 
     protected final void pressKey(KeyBinding key) {
         mc.execute(() -> key.setPressed(true));
@@ -53,7 +59,7 @@ public abstract class Macro extends Thread {
         }
     }
 
-    public final void pause() {
+    public void pause() {
         lock.lock();
         try {
             paused = true;
@@ -62,10 +68,11 @@ public abstract class Macro extends Thread {
         }
     }
 
-    public final void unpause() {
+    public void unpause() {
         lock.lock();
         try {
             paused = false;
+            wasPaused = true;
             unpaused.signalAll();
         } finally {
             lock.unlock();
