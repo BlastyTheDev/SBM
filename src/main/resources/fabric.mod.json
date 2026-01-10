@@ -15,6 +15,9 @@
     ],
     "main": [
       "dev.blasty.sbm.Sbm"
+    ],
+    "modmenu": [
+      "dev.blasty.sbm.client.config.ModMenuIntegration"
     ]
   },
   "mixins": [
