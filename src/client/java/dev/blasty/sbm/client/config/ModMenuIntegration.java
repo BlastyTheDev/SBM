@@ -28,6 +28,10 @@ public class ModMenuIntegration implements ModMenuApi {
                     .setSaveConsumer(value -> CONFIG.get().farmingRuns = value)
                     .setDefaultValue(3)
                     .build());
+            farming.addEntry(entryBuilder.startBooleanToggle(Text.literal("Move Left First"), CONFIG.get().farmingMoveLeftFirst)
+                    .setSaveConsumer(value -> CONFIG.get().farmingMoveLeftFirst = value)
+                    .setDefaultValue(true)
+                    .build());
 
             return builder.build();
         };
