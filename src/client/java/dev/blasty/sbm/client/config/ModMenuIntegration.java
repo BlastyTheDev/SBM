@@ -38,12 +38,13 @@ public class ModMenuIntegration implements ModMenuApi {
                     .build());
             farming.addEntry(entryBuilder.startIntField(Text.literal("Warp Execution Delay (Ticks)"), CONFIG.get().farmingWarpExecutionDelay)
                     .setSaveConsumer(value -> CONFIG.get().farmingWarpExecutionDelay = value)
-                    .setTooltip(Text.literal("Ticks to wait before warping to garden"))
+                    .setTooltip(Text.literal("Ticks to wait before warping to garden."),
+                            Text.literal("Does not apply when starting the macro."))
                     .setDefaultValue(40)
                     .build());
             farming.addEntry(entryBuilder.startIntField(Text.literal("Warp Continuation Delay (Ticks)"), CONFIG.get().farmingWarpContinueDelay)
                     .setSaveConsumer(value -> CONFIG.get().farmingWarpContinueDelay = value)
-                    .setTooltip(Text.literal("Ticks to wait before continuing to macro after warping to garden"))
+                    .setTooltip(Text.literal("Ticks to wait before continuing to macro after warping to garden."))
                     .setDefaultValue(20)
                     .build());
 
