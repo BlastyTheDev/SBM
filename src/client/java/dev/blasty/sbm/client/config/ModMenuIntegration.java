@@ -51,6 +51,18 @@ public class ModMenuIntegration implements ModMenuApi {
                 .setTooltip(Text.literal("Ticks to wait before continuing to macro after warping to garden."))
                 .setDefaultValue(20)
                 .build());
+        farming.addEntry(entryBuilder.startIntField(Text.literal("Tool Hotbar Slot"), CONFIG.get().farmingToolSlot)
+                .setSaveConsumer(value -> CONFIG.get().farmingToolSlot = value)
+                .setDefaultValue(1)
+                .setMin(1)
+                .setMax(8)
+                .build());
+        farming.addEntry(entryBuilder.startIntField(Text.literal("Vacuum Hotbar Slot"), CONFIG.get().farmingVacuumSlot)
+                .setSaveConsumer(value -> CONFIG.get().farmingVacuumSlot = value)
+                .setDefaultValue(8)
+                .setMin(1)
+                .setMax(8)
+                .build());
 
         return builder.build();
     }

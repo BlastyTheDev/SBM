@@ -15,4 +15,14 @@ public class SbmConfig implements ConfigData {
     public int farmingWarpExecutionDelay = 40;
     @ConfigEntry.Gui.Tooltip
     public int farmingWarpContinueDelay = 20;
+    int farmingToolSlot = 1;
+    int farmingVacuumSlot = 8;
+
+    public int getFarmingToolSlot() {
+        return farmingToolSlot + 1;
+    }
+
+    public int getFarmingVacuumSlot() {
+        return farmingVacuumSlot + 1;
+    }
 }
