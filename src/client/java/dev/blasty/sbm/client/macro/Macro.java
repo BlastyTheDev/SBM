@@ -67,6 +67,14 @@ public abstract class Macro extends Thread {
         });
     }
 
+    protected void setHotbarSlot(int slot) {
+        mc.execute(() -> {
+            if (MinecraftClient.getInstance().player != null) {
+                MinecraftClient.getInstance().player.getInventory().setSelectedSlot(slot);
+            }
+        });
+    }
+
     public void pause() {
         lock.lock();
         try {
