@@ -60,6 +60,7 @@ public class FarmingMacro extends Macro {
             if (run + 1 < CONFIG.get().farmingRuns) {
                 sleep(CONFIG.get().farmingWarpExecutionDelay);
                 runCommand("warp garden");
+                movingLeft = CONFIG.get().farmingMoveLeftFirst;
                 sleep(CONFIG.get().farmingWarpContinueDelay);
             }
         }
