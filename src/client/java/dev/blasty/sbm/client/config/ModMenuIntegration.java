@@ -32,6 +32,10 @@ public class ModMenuIntegration implements ModMenuApi {
                     .setSaveConsumer(value -> CONFIG.get().farmingMoveLeftFirst = value)
                     .setDefaultValue(true)
                     .build());
+            farming.addEntry(entryBuilder.startBooleanToggle(Text.literal("Warp to Garden on Start"), CONFIG.get().farmingWarpOnStart)
+                    .setSaveConsumer(value -> CONFIG.get().farmingWarpOnStart = value)
+                    .setDefaultValue(false)
+                    .build());
 
             return builder.build();
         };

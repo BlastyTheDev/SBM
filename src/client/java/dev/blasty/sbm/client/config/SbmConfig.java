@@ -9,4 +9,5 @@ public class SbmConfig implements ConfigData {
     public int farmingRows = 16;
     public int farmingRuns = 3;
     public boolean farmingMoveLeftFirst = true;
+    public boolean farmingWarpOnStart = false;
 }
