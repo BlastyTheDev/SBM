@@ -24,14 +24,14 @@ public class SbmClient implements ClientModInitializer {
 
     private final KeyBinding.Category keybindCategory = KeyBinding.Category.create(Identifier.of("sbm", "keybinds"));
     private final KeyBinding toggleFarmingKey = new KeyBinding("Start/Stop Farming", InputUtil.Type.KEYSYM, InputUtil.GLFW_KEY_F24, keybindCategory);
-    private final KeyBinding resumeFarmingKey = new KeyBinding("Resume Farming", InputUtil.Type.KEYSYM, InputUtil.GLFW_KEY_F23, keybindCategory);
+    private final KeyBinding resumeKey = new KeyBinding("Resume Farming", InputUtil.Type.KEYSYM, InputUtil.GLFW_KEY_F23, keybindCategory);
 
     private Macro currentMacro;
 
     @Override
     public void onInitializeClient() {
         KeyBindingHelper.registerKeyBinding(toggleFarmingKey);
-        KeyBindingHelper.registerKeyBinding(resumeFarmingKey);
+        KeyBindingHelper.registerKeyBinding(resumeKey);
 
         ClientTickEvents.START_CLIENT_TICK.register((mc) -> Macro.tickDelayQueue.offer(Boolean.TRUE));
         ClientTickEvents.END_CLIENT_TICK.register((mc) -> {
@@ -43,8 +43,8 @@ public class SbmClient implements ClientModInitializer {
                     currentMacro.start();
                 }
             }
-            if (resumeFarmingKey.wasPressed()) {
-                if (currentMacro instanceof FarmingMacro && currentMacro.isAlive() && currentMacro.isPaused()) {
+            if (resumeKey.wasPressed()) {
+                if (currentMacro.isAlive() && currentMacro.isPaused()) {
                     currentMacro.unpause();
                 }
             }
@@ -66,27 +66,25 @@ public class SbmClient implements ClientModInitializer {
                                         return 1;
                                     })))
                     .then(literal("pause")
-                            .then(literal("farming")
-                                    .executes(context -> {
-                                        if (currentMacro instanceof FarmingMacro && currentMacro.isAlive() && !currentMacro.isPaused()) {
-                                            currentMacro.pause();
-                                            context.getSource().sendFeedback(Text.literal("Farming macro paused"));
-                                            return 1;
-                                        }
-                                        context.getSource().sendError(Text.literal("Farming macro not running"));
-                                        return 0;
-                                    })))
+                            .executes(context -> {
+                                if (currentMacro.isAlive() && !currentMacro.isPaused()) {
+                                    currentMacro.pause();
+                                    context.getSource().sendFeedback(Text.literal("Macro paused"));
+                                    return 1;
+                                }
+                                context.getSource().sendError(Text.literal("Macro is not running"));
+                                return 0;
+                            }))
                     .then(literal("resume")
-                            .then(literal("farming")
-                                    .executes(context -> {
-                                        if (currentMacro instanceof FarmingMacro && currentMacro.isAlive() && currentMacro.isPaused()) {
-                                            currentMacro.unpause();
-                                            context.getSource().sendFeedback(Text.literal("Farming macro resumed"));
-                                            return 1;
-                                        }
-                                        context.getSource().sendError(Text.literal("No Farming macro to resume"));
-                                        return 0;
-                                    }))));
+                            .executes(context -> {
+                                if (currentMacro.isAlive() && currentMacro.isPaused()) {
+                                    currentMacro.unpause();
+                                    context.getSource().sendFeedback(Text.literal("Macro resumed"));
+                                    return 1;
+                                }
+                                context.getSource().sendError(Text.literal("No Farming macro to resume"));
+                                return 0;
+                            })));
         });
     }
 }
