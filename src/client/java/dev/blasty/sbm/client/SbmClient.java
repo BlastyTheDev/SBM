@@ -1,5 +1,7 @@
 package dev.blasty.sbm.client;
 
+import com.mojang.brigadier.Command;
+import dev.blasty.sbm.client.config.ModMenuIntegration;
 import dev.blasty.sbm.client.config.SbmConfig;
 import dev.blasty.sbm.client.macro.FarmingMacro;
 import dev.blasty.sbm.client.macro.Macro;
@@ -7,10 +9,14 @@ import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigHolder;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 public class SbmClient implements ClientModInitializer {
@@ -42,6 +48,14 @@ public class SbmClient implements ClientModInitializer {
                     currentMacro.unpause();
                 }
             }
+        });
+
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
+            dispatcher.register(ClientCommandManager.literal("sbm").executes(context -> {
+                MinecraftClient mc = MinecraftClient.getInstance();
+                mc.execute(() -> mc.setScreen(ModMenuIntegration.createConfigScreen(mc.currentScreen)));
+                return Command.SINGLE_SUCCESS;
+            }));
         });
     }
 }
