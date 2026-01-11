@@ -97,6 +97,7 @@ public class FarmingMacro extends Macro {
             checkPaused();
             if (wasPaused) {
                 pressKey(opts.forwardKey);
+                pressKey(opts.attackKey);
                 if (horizontal) {
                     pressKey(movingLeft ? opts.leftKey : opts.rightKey);
                 }
