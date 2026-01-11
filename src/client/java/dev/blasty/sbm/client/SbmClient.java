@@ -1,6 +1,5 @@
 package dev.blasty.sbm.client;
 
-import com.mojang.brigadier.Command;
 import dev.blasty.sbm.client.config.ModMenuIntegration;
 import dev.blasty.sbm.client.config.SbmConfig;
 import dev.blasty.sbm.client.macro.FarmingMacro;
@@ -9,7 +8,6 @@ import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigHolder;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -18,6 +16,8 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
 public class SbmClient implements ClientModInitializer {
     public static final ConfigHolder<SbmConfig> CONFIG = AutoConfig.register(SbmConfig.class, JanksonConfigSerializer::new);
@@ -51,11 +51,42 @@ public class SbmClient implements ClientModInitializer {
         });
 
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
-            dispatcher.register(ClientCommandManager.literal("sbm").executes(context -> {
-                MinecraftClient mc = MinecraftClient.getInstance();
-                mc.execute(() -> mc.setScreen(ModMenuIntegration.createConfigScreen(mc.currentScreen)));
-                return Command.SINGLE_SUCCESS;
-            }));
+            dispatcher.register(literal("sbm")
+                    .executes(context -> {
+                        MinecraftClient mc = MinecraftClient.getInstance();
+                        mc.execute(() -> mc.setScreen(ModMenuIntegration.createConfigScreen(mc.currentScreen)));
+                        return 1;
+                    })
+                    .then(literal("start")
+                            .then(literal("farming")
+                                    .executes(context -> {
+                                        currentMacro = new FarmingMacro();
+                                        currentMacro.start();
+                                        context.getSource().sendFeedback(Text.literal("Farming macro started"));
+                                        return 1;
+                                    })))
+                    .then(literal("pause")
+                            .then(literal("farming")
+                                    .executes(context -> {
+                                        if (currentMacro instanceof FarmingMacro && currentMacro.isAlive() && !currentMacro.isPaused()) {
+                                            currentMacro.pause();
+                                            context.getSource().sendFeedback(Text.literal("Farming macro paused"));
+                                            return 1;
+                                        }
+                                        context.getSource().sendError(Text.literal("Farming macro not running"));
+                                        return 0;
+                                    })))
+                    .then(literal("resume")
+                            .then(literal("farming")
+                                    .executes(context -> {
+                                        if (currentMacro instanceof FarmingMacro && currentMacro.isAlive() && currentMacro.isPaused()) {
+                                            currentMacro.unpause();
+                                            context.getSource().sendFeedback(Text.literal("Farming macro resumed"));
+                                            return 1;
+                                        }
+                                        context.getSource().sendError(Text.literal("No Farming macro to resume"));
+                                        return 0;
+                                    }))));
         });
     }
 }
