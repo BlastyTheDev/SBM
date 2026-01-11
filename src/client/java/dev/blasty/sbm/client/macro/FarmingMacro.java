@@ -25,6 +25,7 @@ public class FarmingMacro extends Macro {
             runCommand("warp garden");
             sleep(CONFIG.get().farmingWarpContinueDelay);
         }
+        setHotbarSlot(CONFIG.get().getFarmingToolSlot());
 
         if (mc.player.getAbilities().flying) {
             pressKey(opts.sneakKey);
