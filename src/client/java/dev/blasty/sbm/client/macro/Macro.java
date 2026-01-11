@@ -59,6 +59,14 @@ public abstract class Macro extends Thread {
         }
     }
 
+    protected void runCommand(String command) {
+        mc.execute(() -> {
+            if (MinecraftClient.getInstance().player != null) {
+                MinecraftClient.getInstance().player.networkHandler.sendChatCommand(command);
+            }
+        });
+    }
+
     public void pause() {
         lock.lock();
         try {
