@@ -21,6 +21,11 @@ public class FarmingMacro extends Macro {
             return;
         }
 
+        if (CONFIG.get().farmingWarpOnStart) {
+            runCommand("warp garden");
+            sleep(CONFIG.get().farmingWarpContinueDelay);
+        }
+
         for (int run = 0; run < CONFIG.get().farmingRuns; run++) {
             for (int row = 0; row < CONFIG.get().farmingRows; row++) {
                 pressKey(opts.forwardKey);
@@ -38,6 +43,11 @@ public class FarmingMacro extends Macro {
                 sleep(1);
             }
             releaseKeys();
+            if (run + 1 < CONFIG.get().farmingRuns) {
+                sleep(CONFIG.get().farmingWarpExecutionDelay);
+                runCommand("warp garden");
+                sleep(CONFIG.get().farmingWarpContinueDelay);
+            }
         }
     }
 
