@@ -19,10 +19,10 @@ public class SbmConfig implements ConfigData {
     int farmingVacuumSlot = 8;
 
     public int getFarmingToolSlot() {
-        return farmingToolSlot + 1;
+        return farmingToolSlot - 1;
     }
 
     public int getFarmingVacuumSlot() {
-        return farmingVacuumSlot + 1;
+        return farmingVacuumSlot - 1;
     }
 }

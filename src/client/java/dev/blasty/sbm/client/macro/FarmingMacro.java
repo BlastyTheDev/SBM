@@ -21,11 +21,12 @@ public class FarmingMacro extends Macro {
             return;
         }
 
+        setHotbarSlot(CONFIG.get().getFarmingToolSlot());
+
         if (CONFIG.get().farmingWarpOnStart) {
             runCommand("warp garden");
             sleep(CONFIG.get().farmingWarpContinueDelay);
         }
-        setHotbarSlot(CONFIG.get().getFarmingToolSlot());
 
         if (mc.player.getAbilities().flying) {
             pressKey(opts.sneakKey);
