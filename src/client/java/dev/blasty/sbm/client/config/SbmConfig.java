@@ -2,6 +2,7 @@ package dev.blasty.sbm.client.config;
 
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
+import me.shedaniel.autoconfig.annotation.ConfigEntry;
 
 @Config(name = "sbm")
 public class SbmConfig implements ConfigData {
@@ -10,4 +11,8 @@ public class SbmConfig implements ConfigData {
     public int farmingRuns = 3;
     public boolean farmingMoveLeftFirst = true;
     public boolean farmingWarpOnStart = false;
+    @ConfigEntry.Gui.Tooltip
+    public int farmingWarpExecutionDelay = 40;
+    @ConfigEntry.Gui.Tooltip
+    public int farmingWarpContinueDelay = 20;
 }
