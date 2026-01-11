@@ -26,11 +26,11 @@ public abstract class Macro extends Thread {
     }
 
     protected final void pressKey(KeyBinding key) {
-        mc.execute(() -> key.setPressed(true));
+        mc.executeTask(() -> key.setPressed(true));
     }
 
     protected final void releaseKey(KeyBinding key) {
-        mc.execute(() -> key.setPressed(false));
+        mc.executeTask(() -> key.setPressed(false));
     }
 
     protected final void sleep(int ticks) {
@@ -60,7 +60,7 @@ public abstract class Macro extends Thread {
     }
 
     protected void runCommand(String command) {
-        mc.execute(() -> {
+        mc.executeTask(() -> {
             if (MinecraftClient.getInstance().player != null) {
                 MinecraftClient.getInstance().player.networkHandler.sendChatCommand(command);
             }
@@ -68,7 +68,7 @@ public abstract class Macro extends Thread {
     }
 
     protected void setHotbarSlot(int slot) {
-        mc.execute(() -> {
+        mc.executeTask(() -> {
             if (MinecraftClient.getInstance().player != null) {
                 MinecraftClient.getInstance().player.getInventory().setSelectedSlot(slot);
             }
