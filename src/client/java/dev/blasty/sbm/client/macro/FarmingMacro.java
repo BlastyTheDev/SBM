@@ -26,6 +26,18 @@ public class FarmingMacro extends Macro {
             sleep(CONFIG.get().farmingWarpContinueDelay);
         }
 
+        if (mc.player.getAbilities().flying) {
+            pressKey(opts.sneakKey);
+        }
+        while (mc.player.getAbilities().flying) {
+            sleep(1);
+            checkPaused();
+            if (wasPaused) {
+                pressKey(opts.sneakKey);
+            }
+        }
+        releaseKey(opts.sneakKey);
+
         for (int run = 0; run < CONFIG.get().farmingRuns; run++) {
             for (int row = 0; row < CONFIG.get().farmingRows; row++) {
                 pressKey(opts.forwardKey);
@@ -62,6 +74,7 @@ public class FarmingMacro extends Macro {
         releaseKey(opts.leftKey);
         releaseKey(opts.rightKey);
         releaseKey(opts.attackKey);
+        releaseKey(opts.sneakKey);
     }
 
     private void waitToFinishRow(boolean horizontal) {
