@@ -2,10 +2,10 @@
 **S**ky**B**lock **M**acro is a [Fabric](https://fabricmc.net/) mod that aims to automate repetitive tasks in [Hypixel](https://hypixel.net/) SkyBlock.
 
 ## Features
-Early development - none yet!
+- Basic Farming macro for S-shaped farms (using water/air walkways)
 
 ## Planned Features
 - All macros to be highly configurable using Cloth Config API
-- Farming Macro for S-shaped farms
+- Handling of Pests and Visitors in the Garden
 - Fishing Macro (with options for killing Sea Creatures)
 - Automatic Selling to Bazaar and NPC (/trades)
