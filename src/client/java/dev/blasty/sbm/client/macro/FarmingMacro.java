@@ -1,21 +1,32 @@
 package dev.blasty.sbm.client.macro;
 
+import dev.blasty.sbm.client.mixin.MinecraftClientAccessor;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
 import net.minecraft.client.network.PlayerListEntry;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.fluid.Fluids;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Position;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static dev.blasty.sbm.client.SbmClient.CONFIG;
 
 public class FarmingMacro extends Macro {
+    private static final int ACCEPT_OFFER = 29;
+    private static final int REFUSE_OFFER = 33;
+
     private boolean movingLeft = CONFIG.get().farmingMoveLeftFirst;
 
     private final AtomicInteger visitorCount = new AtomicInteger(-1);
@@ -101,12 +112,73 @@ public class FarmingMacro extends Macro {
                 blockInFront.set(mc.world.getBlockState(getBlockInFrontPos(mc.player.getEntityPos())));
             });
 
+            if (CONFIG.get().farmingServeVisitors && checkVisitors && visitorCount.get() >= 0) {
+                if (visitorCount.get() >= 4) { // tablist takes time to update
+                    serveVisitors();
+                }
+                checkVisitors = false;
+                visitorCount.set(-1);
+            }
+
             checkPaused();
             pressKey(opts.forwardKey);
             pressKey(opts.attackKey);
             if (horizontal) {
                 pressKey(movingLeft ? opts.leftKey : opts.rightKey);
             }
+        }
+    }
+
+    private void serveVisitors() {
+        releaseKeys();
+        sleep(CONFIG.get().farmingWarpExecutionDelay);
+        runCommand("tptoplot barn");
+        sleep(CONFIG.get().farmingWarpContinueDelay);
+
+        for (int i = 0; i < 1; i++) {
+            // double click to open visitor inv faster
+            ((MinecraftClientAccessor) mc).leftClick();
+            sleep(3);
+            ((MinecraftClientAccessor) mc).leftClick();
+            // wait for inv to open
+            while (!(mc.currentScreen instanceof GenericContainerScreen screen)) {
+                sleep(1);
+            }
+            Inventory visitorMenu = screen.getScreenHandler().getInventory();
+            boolean immediatelyAcceptable = false;
+            boolean readAllRequiredItems = false;
+            List<String> requiredItems = new ArrayList<>();
+            int copperReward = 0;
+            int loreLinesIndex = 0;
+            for (Text t : Objects.requireNonNull(visitorMenu.getStack(ACCEPT_OFFER).get(DataComponentTypes.LORE)).lines()) {
+                String s = t.getString();
+                if (s.isBlank()) {
+                    readAllRequiredItems = true;
+                }
+                if (loreLinesIndex > 0 && !readAllRequiredItems) {
+                    requiredItems.add(s);
+                }
+                if (s.contains("Copper")) {
+                    copperReward = Integer.parseInt(s.strip().split(" ")[0].substring(1));
+                }
+                if (!immediatelyAcceptable && s.equals("Click to give!")) {
+                    immediatelyAcceptable = true;
+                }
+                loreLinesIndex++;
+            }
+
+            assert mc.interactionManager != null;
+            // i guess at least 20 copper is "worth it"
+            if (copperReward < 20) {
+                mc.interactionManager.clickSlot(screen.getScreenHandler().syncId, REFUSE_OFFER, 0, SlotActionType.PICKUP, mc.player);
+                continue;
+            }
+            // TODO: 1. Make min copper reward configurable, 2. Implement buying items, 3. Make player jump onto desk so visitors are reachable
+            if (!immediatelyAcceptable) {
+                // buy items
+            }
+
+            mc.interactionManager.clickSlot(screen.getScreenHandler().syncId, ACCEPT_OFFER, 0, SlotActionType.PICKUP, mc.player);
         }
     }
 
