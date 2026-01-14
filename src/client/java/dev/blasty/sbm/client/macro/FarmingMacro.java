@@ -2,18 +2,24 @@ package dev.blasty.sbm.client.macro;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.fluid.Fluids;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Position;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static dev.blasty.sbm.client.SbmClient.CONFIG;
 
 public class FarmingMacro extends Macro {
     private boolean movingLeft = CONFIG.get().farmingMoveLeftFirst;
+
+    private final AtomicInteger visitorCount = new AtomicInteger(-1);
+    private volatile boolean checkVisitors;
 
     @Override
     public void run() {
@@ -124,5 +130,28 @@ public class FarmingMacro extends Macro {
             xOffset = -1;
         }
         return BlockPos.ofFloored(pos.getX() + xOffset, pos.getY(), pos.getZ() + zOffset);
+    }
+
+    private void checkVisitorCount() {
+        mc.executeTask(() -> {
+            MinecraftClient mc = MinecraftClient.getInstance();
+            assert mc.player != null;
+            for (PlayerListEntry entry : mc.player.networkHandler.getPlayerList()) {
+                Text entryName = entry.getDisplayName();
+                if (entryName == null) {
+                    continue;
+                }
+                String entryNameStr = entryName.getString();
+                if (entryNameStr.contains("Visitors: (")) {
+                    int substringIndex = entryNameStr.indexOf(')') - 1;
+                    visitorCount.set(Integer.parseInt(entryNameStr.substring(substringIndex, substringIndex + 1)));
+                }
+            }
+        });
+    }
+
+    public void queueVisitorCheck() {
+        checkVisitors = true;
+        checkVisitorCount();
     }
 }
