@@ -140,6 +140,7 @@ public class FarmingMacro extends Macro {
                 if (entryNameStr.contains("Visitors: (")) {
                     int substringIndex = entryNameStr.indexOf(')') - 1;
                     visitorCount.set(Integer.parseInt(entryNameStr.substring(substringIndex, substringIndex + 1)));
+                    break;
                 }
             }
         });
