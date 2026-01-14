@@ -40,9 +40,7 @@ public class FarmingMacro extends Macro {
         while (mc.player.getAbilities().flying) {
             sleep(1);
             checkPaused();
-            if (wasPaused) {
-                pressKey(opts.sneakKey);
-            }
+            pressKey(opts.sneakKey);
         }
         releaseKey(opts.sneakKey);
 
@@ -104,13 +102,10 @@ public class FarmingMacro extends Macro {
             });
 
             checkPaused();
-            if (wasPaused) {
-                pressKey(opts.forwardKey);
-                pressKey(opts.attackKey);
-                if (horizontal) {
-                    pressKey(movingLeft ? opts.leftKey : opts.rightKey);
-                }
-                wasPaused = false;
+            pressKey(opts.forwardKey);
+            pressKey(opts.attackKey);
+            if (horizontal) {
+                pressKey(movingLeft ? opts.leftKey : opts.rightKey);
             }
         }
     }
