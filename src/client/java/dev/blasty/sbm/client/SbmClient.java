@@ -24,7 +24,7 @@ public class SbmClient implements ClientModInitializer {
 
     private final KeyBinding.Category keybindCategory = KeyBinding.Category.create(Identifier.of("sbm", "keybinds"));
     private final KeyBinding toggleFarmingKey = new KeyBinding("Start/Stop Farming", InputUtil.Type.KEYSYM, InputUtil.GLFW_KEY_F24, keybindCategory);
-    private final KeyBinding resumeKey = new KeyBinding("Resume Farming", InputUtil.Type.KEYSYM, InputUtil.GLFW_KEY_F23, keybindCategory);
+    private final KeyBinding resumeKey = new KeyBinding("Resume Macro", InputUtil.Type.KEYSYM, InputUtil.GLFW_KEY_F23, keybindCategory);
 
     private Macro currentMacro;
 
