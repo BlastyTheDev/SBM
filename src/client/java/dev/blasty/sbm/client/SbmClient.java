@@ -20,6 +20,12 @@ import net.minecraft.util.Identifier;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
 public class SbmClient implements ClientModInitializer {
+    private static SbmClient instance;
+
+    public static SbmClient getInstance() {
+        return instance;
+    }
+
     public static final ConfigHolder<SbmConfig> CONFIG = AutoConfig.register(SbmConfig.class, JanksonConfigSerializer::new);
 
     private final KeyBinding.Category keybindCategory = KeyBinding.Category.create(Identifier.of("sbm", "keybinds"));
@@ -30,6 +36,8 @@ public class SbmClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        instance = this;
+
         KeyBindingHelper.registerKeyBinding(toggleFarmingKey);
         KeyBindingHelper.registerKeyBinding(resumeKey);
 
@@ -86,5 +94,9 @@ public class SbmClient implements ClientModInitializer {
                                 return 0;
                             })));
         });
+    }
+
+    public Macro getCurrentMacro() {
+        return currentMacro;
     }
 }
