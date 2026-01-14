@@ -25,4 +25,6 @@ public class SbmConfig implements ConfigData {
     public int getFarmingVacuumSlot() {
         return farmingVacuumSlot - 1;
     }
+
+    public boolean farmingServeVisitors = true;
 }

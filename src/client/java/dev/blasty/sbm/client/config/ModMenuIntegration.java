@@ -63,6 +63,10 @@ public class ModMenuIntegration implements ModMenuApi {
                 .setMin(1)
                 .setMax(8)
                 .build());
+        farming.addEntry(entryBuilder.startBooleanToggle(Text.literal("Serve Visitors"), CONFIG.get().farmingServeVisitors)
+                .setSaveConsumer(value -> CONFIG.get().farmingServeVisitors = value)
+                .setDefaultValue(true)
+                .build());
 
         return builder.build();
     }
