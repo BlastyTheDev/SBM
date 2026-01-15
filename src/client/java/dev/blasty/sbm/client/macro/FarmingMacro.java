@@ -240,11 +240,13 @@ public class FarmingMacro extends Macro {
             }
 
             mc.interactionManager.clickSlot(screen.getScreenHandler().syncId, ACCEPT_OFFER, 0, SlotActionType.PICKUP, mc.player);
-            sleep(20);
-            pressKey(opts.forwardKey);
-            sleep(2);
-            releaseKey(opts.forwardKey);
-            sleep(5 * 20);
+            if (i + 1 < 5) {
+                sleep(20);
+                pressKey(opts.forwardKey);
+                sleep(2);
+                releaseKey(opts.forwardKey);
+                sleep(5 * 20);
+            }
         }
 
         // TODO: return to farming
