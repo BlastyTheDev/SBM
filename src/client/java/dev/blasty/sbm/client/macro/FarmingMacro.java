@@ -144,7 +144,6 @@ public class FarmingMacro extends Macro {
         sleep(CONFIG.get().farmingWarpContinueDelay);
 
         assert mc.player != null;
-        mc.player.setSprinting(false);
         mc.player.setPitch(mc.player.getPitch() + 30f / 9);
         pressKey(opts.forwardKey);
         sleep(1);
@@ -158,6 +157,10 @@ public class FarmingMacro extends Macro {
             mc.player.setPitch(mc.player.getPitch() + 30f / 9);
         }
         releaseKey(opts.forwardKey);
+        mc.execute(() -> {
+            assert MinecraftClient.getInstance().player != null;
+            MinecraftClient.getInstance().player.setSprinting(false);
+        });
 
         for (int i = 0; i < 5; i++) {
             // double click to open visitor inv faster
