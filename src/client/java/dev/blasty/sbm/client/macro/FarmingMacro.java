@@ -144,6 +144,7 @@ public class FarmingMacro extends Macro {
         sleep(CONFIG.get().farmingWarpContinueDelay);
 
         assert mc.player != null;
+        mc.player.setSprinting(false);
         mc.player.setPitch(mc.player.getPitch() + 30f / 9);
         pressKey(opts.forwardKey);
         sleep(1);
