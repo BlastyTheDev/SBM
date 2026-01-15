@@ -225,6 +225,9 @@ public class FarmingMacro extends Macro {
                     sleep(1);
                     mc.player.closeHandledScreen();
                 }
+                sleep(5);
+                ((MinecraftClientAccessor) mc).leftClick();
+                screen = waitForInventory();
             }
 
             mc.interactionManager.clickSlot(screen.getScreenHandler().syncId, ACCEPT_OFFER, 0, SlotActionType.PICKUP, mc.player);
