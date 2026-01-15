@@ -197,6 +197,11 @@ public class FarmingMacro extends Macro {
 
             if (copperReward < CONFIG.get().farmingMinCopperReward) {
                 mc.interactionManager.clickSlot(screen.getScreenHandler().syncId, REFUSE_OFFER, 0, SlotActionType.PICKUP, mc.player);
+                sleep(20);
+                pressKey(opts.forwardKey);
+                sleep(2);
+                releaseKey(opts.forwardKey);
+                sleep(5 * 20);
                 continue;
             }
 
@@ -235,7 +240,15 @@ public class FarmingMacro extends Macro {
             }
 
             mc.interactionManager.clickSlot(screen.getScreenHandler().syncId, ACCEPT_OFFER, 0, SlotActionType.PICKUP, mc.player);
+            sleep(20);
+            pressKey(opts.forwardKey);
+            sleep(2);
+            releaseKey(opts.forwardKey);
+            sleep(5 * 20);
         }
+
+        // TODO: return to farming
+        pause();
     }
 
     private GenericContainerScreen waitForInventory() {
