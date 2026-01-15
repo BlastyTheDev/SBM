@@ -195,7 +195,7 @@ public class FarmingMacro extends Macro {
                 mc.interactionManager.clickSlot(screen.getScreenHandler().syncId, REFUSE_OFFER, 0, SlotActionType.PICKUP, mc.player);
                 continue;
             }
-            // TODO: 1. Make min copper reward configurable, 2. Accept offer after buying items
+            // TODO: Make min copper reward configurable
             if (!immediatelyAcceptable) {
                 mc.player.closeHandledScreen();
                 for (String item : requiredItems) {
