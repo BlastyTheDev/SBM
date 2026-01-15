@@ -158,7 +158,7 @@ public class FarmingMacro extends Macro {
         }
         releaseKey(opts.forwardKey);
 
-        for (int i = 0; i < visitorCount.get(); i++) {
+        for (int i = 0; i < 5; i++) {
             // double click to open visitor inv faster
             ((MinecraftClientAccessor) mc).leftClick();
             sleep(3);
