@@ -1,10 +1,14 @@
 package dev.blasty.sbm.client.macro;
 
+import dev.blasty.sbm.client.mixin.AbstractSignEditScreenAccessor;
 import dev.blasty.sbm.client.mixin.MinecraftClientAccessor;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
+import net.minecraft.client.gui.screen.ingame.SignEditScreen;
 import net.minecraft.client.network.PlayerListEntry;
+import net.minecraft.client.util.SelectionManager;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.inventory.Inventory;
@@ -26,6 +30,10 @@ import static dev.blasty.sbm.client.SbmClient.CONFIG;
 public class FarmingMacro extends Macro {
     private static final int ACCEPT_OFFER = 29;
     private static final int REFUSE_OFFER = 33;
+    private static final int BZ_FIRST_ITEM = 11;
+    private static final int BZ_BUY_INSTANTLY = 10;
+    private static final int BZ_SELECT_QTY = 16;
+    private static final int BZ_CONFIRM_BUY = 13;
 
     private boolean movingLeft = CONFIG.get().farmingMoveLeftFirst;
 
@@ -140,10 +148,8 @@ public class FarmingMacro extends Macro {
             ((MinecraftClientAccessor) mc).leftClick();
             sleep(3);
             ((MinecraftClientAccessor) mc).leftClick();
-            // wait for inv to open
-            while (!(mc.currentScreen instanceof GenericContainerScreen screen)) {
-                sleep(1);
-            }
+            GenericContainerScreen screen = waitForInventory();
+            sleep(5);
             Inventory visitorMenu = screen.getScreenHandler().getInventory();
             boolean immediatelyAcceptable = false;
             boolean readAllRequiredItems = false;
@@ -156,7 +162,7 @@ public class FarmingMacro extends Macro {
                     readAllRequiredItems = true;
                 }
                 if (loreLinesIndex > 0 && !readAllRequiredItems) {
-                    requiredItems.add(s);
+                    requiredItems.add(s.strip());
                 }
                 if (s.contains("Copper")) {
                     copperReward = Integer.parseInt(s.strip().split(" ")[0].substring(1));
@@ -168,18 +174,64 @@ public class FarmingMacro extends Macro {
             }
 
             assert mc.interactionManager != null;
+            assert mc.player != null;
             // i guess at least 20 copper is "worth it"
             if (copperReward < 20) {
                 mc.interactionManager.clickSlot(screen.getScreenHandler().syncId, REFUSE_OFFER, 0, SlotActionType.PICKUP, mc.player);
                 continue;
             }
-            // TODO: 1. Make min copper reward configurable, 2. Implement buying items, 3. Make player jump onto desk so visitors are reachable
+            // TODO: 1. Make min copper reward configurable, 2. Accept offer after buying items, 3. Make player jump onto desk so visitors are reachable
             if (!immediatelyAcceptable) {
-                // buy items
+                mc.player.closeHandledScreen();
+                for (String item : requiredItems) {
+                    sleep(10);
+                    String itemName = item.substring(0, item.lastIndexOf(" x"));
+                    int quantity = Integer.parseInt(item.substring(item.lastIndexOf('x') + 1));
+
+                    runCommand("bz " + itemName.toLowerCase());
+                    GenericContainerScreen bz = waitForInventory();
+                    mc.interactionManager.clickSlot(bz.getScreenHandler().syncId, BZ_FIRST_ITEM, 0, SlotActionType.PICKUP, mc.player);
+
+                    GenericContainerScreen itemPage = (GenericContainerScreen) waitForScreenChange(bz);
+                    mc.interactionManager.clickSlot(itemPage.getScreenHandler().syncId, BZ_BUY_INSTANTLY, 0, SlotActionType.PICKUP, mc.player);
+
+                    GenericContainerScreen buyPage = (GenericContainerScreen) waitForScreenChange(itemPage);
+                    mc.interactionManager.clickSlot(buyPage.getScreenHandler().syncId, BZ_SELECT_QTY, 0, SlotActionType.PICKUP, mc.player);
+
+                    SignEditScreen qtySelect = (SignEditScreen) waitForScreenChange(buyPage);
+                    SelectionManager sm = ((AbstractSignEditScreenAccessor) qtySelect).getSelectionManager();
+                    mc.execute(() -> {
+                        sm.insert(String.valueOf(quantity));
+                        qtySelect.close();
+                    });
+
+                    GenericContainerScreen confirm = waitForInventory();
+                    mc.interactionManager.clickSlot(confirm.getScreenHandler().syncId, BZ_CONFIRM_BUY, 0, SlotActionType.PICKUP, mc.player);
+                    sleep(1);
+                    mc.player.closeHandledScreen();
+                }
             }
 
             mc.interactionManager.clickSlot(screen.getScreenHandler().syncId, ACCEPT_OFFER, 0, SlotActionType.PICKUP, mc.player);
         }
+    }
+
+    private GenericContainerScreen waitForInventory() {
+        while (!(mc.currentScreen instanceof GenericContainerScreen screen)) {
+            sleep(1);
+        }
+        return screen;
+    }
+
+    private Screen waitForScreenChange(Screen current) {
+        while (true) {
+            assert mc.currentScreen != null;
+            if (!mc.currentScreen.equals(current)) {
+                break;
+            }
+            sleep(1);
+        }
+        return mc.currentScreen;
     }
 
     private @NotNull BlockPos getBlockInFrontPos(Position pos) {
