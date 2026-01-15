@@ -143,7 +143,22 @@ public class FarmingMacro extends Macro {
         runCommand("tptoplot barn");
         sleep(CONFIG.get().farmingWarpContinueDelay);
 
-        for (int i = 0; i < 1; i++) {
+        assert mc.player != null;
+        mc.player.setPitch(mc.player.getPitch() + 30f / 9);
+        pressKey(opts.forwardKey);
+        sleep(1);
+        mc.player.setPitch(mc.player.getPitch() + 30f / 9);
+        pressKey(opts.jumpKey);
+        sleep(1);
+        mc.player.setPitch(mc.player.getPitch() + 30f / 9);
+        releaseKey(opts.jumpKey);
+        for (int i = 0; i < 7; i++) {
+            sleep(1);
+            mc.player.setPitch(mc.player.getPitch() + 30f / 9);
+        }
+        releaseKey(opts.forwardKey);
+
+        for (int i = 0; i < visitorCount.get(); i++) {
             // double click to open visitor inv faster
             ((MinecraftClientAccessor) mc).leftClick();
             sleep(3);
@@ -180,7 +195,7 @@ public class FarmingMacro extends Macro {
                 mc.interactionManager.clickSlot(screen.getScreenHandler().syncId, REFUSE_OFFER, 0, SlotActionType.PICKUP, mc.player);
                 continue;
             }
-            // TODO: 1. Make min copper reward configurable, 2. Accept offer after buying items, 3. Make player jump onto desk so visitors are reachable
+            // TODO: 1. Make min copper reward configurable, 2. Accept offer after buying items
             if (!immediatelyAcceptable) {
                 mc.player.closeHandledScreen();
                 for (String item : requiredItems) {
