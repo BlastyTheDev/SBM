@@ -4,9 +4,9 @@
   "package": "dev.blasty.sbm.client.mixin",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "AbstractSignEditScreenAccessor",
     "ChatHudMixin",
-    "MinecraftClientAccessor",
-    "AbstractSignEditScreenAccessor"
+    "MinecraftClientAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
