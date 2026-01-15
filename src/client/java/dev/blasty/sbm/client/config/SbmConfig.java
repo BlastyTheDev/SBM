@@ -27,4 +27,6 @@ public class SbmConfig implements ConfigData {
     }
 
     public boolean farmingServeVisitors = true;
+    @ConfigEntry.Gui.Tooltip
+    public int farmingMinCopperReward = 20;
 }

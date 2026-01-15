@@ -190,12 +190,12 @@ public class FarmingMacro extends Macro {
 
             assert mc.interactionManager != null;
             assert mc.player != null;
-            // i guess at least 20 copper is "worth it"
-            if (copperReward < 20) {
+
+            if (copperReward < CONFIG.get().farmingMinCopperReward) {
                 mc.interactionManager.clickSlot(screen.getScreenHandler().syncId, REFUSE_OFFER, 0, SlotActionType.PICKUP, mc.player);
                 continue;
             }
-            // TODO: Make min copper reward configurable
+
             if (!immediatelyAcceptable) {
                 mc.player.closeHandledScreen();
                 for (String item : requiredItems) {

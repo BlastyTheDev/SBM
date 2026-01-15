@@ -67,6 +67,12 @@ public class ModMenuIntegration implements ModMenuApi {
                 .setSaveConsumer(value -> CONFIG.get().farmingServeVisitors = value)
                 .setDefaultValue(true)
                 .build());
+        farming.addEntry(entryBuilder.startIntField(Text.literal("Minimum Copper Reward"), CONFIG.get().farmingMinCopperReward)
+                .setSaveConsumer(value -> CONFIG.get().farmingMinCopperReward = value)
+                .setTooltip(Text.literal("Minimum amount of Copper a visitor needs to offer to be accepted"))
+                .setDefaultValue(20)
+                .setMin(0)
+                .build());
 
         return builder.build();
     }
